@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windinroad.ai/schemas/857-passport.v1.json",
+  "title": "857PassportRecord",
+  "description": "A user-sovereign, cryptographically sealed record of an interaction state and context thread within the Windin' Road AI infrastructure.",
+  "type": "object",
+  "required": [
+    "passport_version",
+    "record_id",
+    "timestamp_utc",
+    "sovereign_identity",
+    "state_hash",
+    "interaction_payload",
+    "cryptographic_proof"
+  ],
+  "properties": {
+    "passport_version": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "record_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "thread_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sovereign_identity": {
+      "type": "object",
+      "required": ["user_public_key", "key_algorithm"],
+      "properties": {
+        "user_public_key": { "type": "string" },
+        "key_algorithm": {
+          "type": "string",
+          "enum": ["Ed25519", "ECDSA_P256", "RSA_4096"]
+        }
+      }
+    },
+    "state_hash": {
+      "type": "object",
+      "required": ["algorithm", "previous_state_hash", "current_state_hash", "tamper_flag"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["SHA-256", "BLAKE3"]
+        },
+        "previous_state_hash": { "type": ["string", "null"] },
+        "current_state_hash": { "type": "string" },
+        "tamper_flag": { "type": "boolean" }
+      }
+    },
+    "interaction_payload": {
+      "type": "object",
+      "required": ["prompt_hash", "completion_hash", "solglitter_compliance"],
+      "properties": {
+        "prompt_hash": { "type": "string" },
+        "completion_hash": { "type": "string" },
+        "solglitter_compliance": {
+          "type": "object",
+          "required": ["direct_answer_only", "zero_coaching_enforced", "time_gap_logged_seconds"],
+          "properties": {
+            "direct_answer_only": { "type": "boolean" },
+            "zero_coaching_enforced": { "type": "boolean" },
+            "time_gap_logged_seconds": { "type": "number" }
+          }
+        }
+      }
+    },
+    "cryptographic_proof": {
+      "type": "object",
+      "required": ["signature", "signed_bytes_digest"],
+      "properties": {
+        "signature": { "type": "string" },
+        "signed_bytes_digest": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}
